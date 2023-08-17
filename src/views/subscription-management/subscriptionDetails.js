@@ -45,7 +45,7 @@ function SPDetails() {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [subscription, setSubscription] = useState({});
-  const { id } = useParams();
+  const { mode,id } = useParams();
   const [subscriptions, setSubscriptions] = useState({});
 
   useEffect(() => {
@@ -61,7 +61,7 @@ function SPDetails() {
       token
     );
 
-    setSubscription(subscriptions);
+    setSubscription(subscriptions.data);
     setLoading(false);
   };
 
@@ -87,7 +87,7 @@ function SPDetails() {
   const updateSubscription = async () => {
     try {
       const response = await Post(
-        SUBSCRIPTION.edit + "/" + id,
+        SUBSCRIPTION.edit + id,
         subscription,
         token,
         {}
@@ -140,7 +140,7 @@ function SPDetails() {
             />
             &emsp;
             <h1 className="pageTitle" style={{ margin: 0 }}>
-            {id ? "Edit Subscription Package" :"Create New Subscription Package"}
+            {id ? (mode == "view" ? "Package Details" : "Edit Subscription Package" ) :"Create New Subscription Package"}
             </h1>
           </Col>
         </Row>
@@ -181,6 +181,17 @@ function SPDetails() {
                 >
                   Package Name
                 </h5>
+                {mode == "view" ? <h4
+                  className="pageTitle2"
+                  style={{
+                    fontSize: "14px",
+                    margin: "10px 20px",
+                    color:"grey",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {subscription?.title}
+                </h4>:
                 <Input
                   style={{ width: "100%" }}
                   className="mainInput dashInput"
@@ -189,7 +200,7 @@ function SPDetails() {
                   onChange={(e) =>
                     setSubscription({ ...subscription, title: e.target.value })
                   }
-                />
+                />}
               </Col>
             </Row>
 
@@ -213,6 +224,17 @@ function SPDetails() {
                 >
                   Package price
                 </h5>
+                {mode == "view" ? <h4
+                  className="pageTitle2"
+                  style={{
+                    fontSize: "14px",
+                    margin: "10px 20px",
+                    color:"grey",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  ${subscription?.price}
+                </h4>:
                 <InputNumber
                 size="small"
                   style={{ width: "100%" }}
@@ -222,7 +244,7 @@ function SPDetails() {
                   onChange={(e) =>
                     setSubscription({ ...subscription, price: e })
                   }
-                />
+                />}
               </Col>
             </Row>
 
@@ -246,6 +268,18 @@ function SPDetails() {
                 >
                   Package Duration
                 </h5>
+
+                {mode == "view" ? <h4
+                  className="pageTitle2"
+                  style={{
+                    fontSize: "14px",
+                    margin: "10px 20px",
+                    color:"grey",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {subscription?.durationInDays} Days
+                </h4>:
                 <InputNumber
                 size="small"
                   style={{ width: "100%" }}
@@ -255,43 +289,9 @@ function SPDetails() {
                   onChange={(e) =>
                     setSubscription({ ...subscription, durationInDays: e })
                   }
-                />
+                />}
               </Col>
             </Row>
-
-            <Row style={{ padding: "5px 20px" }}>
-              <Col
-                xs={24}
-                md={12}
-                style={{
-                  display: "flex",
-                  alignItems: "left",
-                  flexDirection: "column",
-                }}
-              >
-                <h5
-                  className="pageTitle2"
-                  style={{
-                    fontSize: "16px",
-                    margin: 10,
-                    textTransform: "capitalize",
-                  }}
-                >
-                  Number of Bookings
-                </h5>
-                <InputNumber
-                size="small"
-                  style={{ width: "100%" }}
-                  className="mainInput dashInput"
-                  placeholder="Number of Bookings allowed"
-                  value={subscription?.numberOfBookings}
-                  onChange={(e) =>
-                    setSubscription({ ...subscription, numberOfBookings: e })
-                  }
-                />
-              </Col>
-            </Row>
-            
 
             <Row style={{ padding: "5px 20px" }}>
               <Col
@@ -313,6 +313,19 @@ function SPDetails() {
                 >
                   Features
                 </h5>
+
+                {mode == "view" ? <>{ subscription?.features && subscription?.features?.map((item) => {
+                  return(<h4
+                    className="pageTitle2"
+                    style={{
+                      fontSize: "14px",
+                      margin: "5px 20px",
+                      color:"grey",
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {item}
+                  </h4>)})}</>:
                 <Input
                   style={{ width: "100%" }}
                   className="mainInput dashInput"
@@ -321,7 +334,7 @@ function SPDetails() {
                   onChange={(e) =>
                     setSubscription({ ...subscription, features: e.target.value })
                   }
-                />
+                />}
               </Col>
             </Row>
 
@@ -345,11 +358,22 @@ function SPDetails() {
                 >
                   Package Description
                 </h5>
+                {mode == "view" ? <h4
+                  className="pageTitle2"
+                  style={{
+                    fontSize: "14px",
+                    margin: "10px 20px",
+                    color:"grey",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {subscription?.description} 
+                </h4>:
                 <TextArea className="mainInput dashInput" rows={4} placeholder="Enter Package Description"
                   value={subscription?.description}
                   onChange={(e) =>
                     setSubscription({ ...subscription, description: e.target.value })
-                  }/>
+                  }/>}
               
               </Col>
             </Row>

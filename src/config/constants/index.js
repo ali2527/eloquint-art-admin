@@ -46,10 +46,11 @@ export const AUTH = {
 
 
   export const SUBSCRIPTION = {
-    get: "/Plan",
-    create:"/Plan",
-    getOne: "/Plan/",
-    edit: "/Plan/edit",
+    get: "/plan/getAllPlans",
+    create:"/plan/addPlan",
+    getOne: "/plan/getPlanById/",
+    edit: "/plan/editPlan/",
+    delete: "/plan/deletePlan/",
   };
 
 

@@ -10,10 +10,10 @@ import {
   Button,
   Popover,
   Layout,
-  Checkbox,
+  Dropdown,
   Skeleton,
   Table,
-  Spin,
+  Space,
   Select,
   Image,
   Pagination,
@@ -22,19 +22,43 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { UserOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import { FaSearch, FaFilter, FaCaretDown, FaEye } from "react-icons/fa";
+import { FaSearch, FaFilter, FaCaretDown, FaEye,FaTrash,FaEdit } from "react-icons/fa";
+import {AiOutlineEdit} from "react-icons/ai";
+import { BiDotsVerticalRounded } from "react-icons/bi";
 import ClientLayout from "../../components/ClientLayout";
 import { Get } from "../../config/api/get";
 import { Post } from "../../config/api/post";
 import { SUBSCRIPTION } from "../../config/constants";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import swal from "sweetalert";
+
+
+const items = [
+  {
+    key: 'view',
+    label: 'View',
+    icon:<FaEye/>
+  },
+  {
+    key: 'edit',
+    label: 'Edit',
+    icon:<FaEdit/>
+  },
+  {
+    key: 'delete',
+    label: 'Delete',
+    icon:<FaTrash/>
+  },
+]; 
+
 
 function PlanManagement() {
   const token = useSelector((state) => state.user.userToken);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen2, setModalOpen2] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [subscriptions, setSubscriptions] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -132,7 +156,7 @@ function PlanManagement() {
 
       console.log(index);
       const response = await Post(
-        SUBSCRIPTION.edit + "/" + selectedPlan._id,{
+        SUBSCRIPTION.edit  + selectedPlan._id,{
             isActive: !selectedPlan.isActive,
         },
         token,
@@ -147,6 +171,15 @@ function PlanManagement() {
       setSubscriptions(newUsers);
     } catch (error) {
       console.log(error.message);
+    }
+  };
+
+  const handleRedirect = (key,value) => {
+    if(key == "delete"){
+      setModalOpen2(true);
+      setSelectedPlan(value);
+    }else{
+      navigate("/subscription-management/" + key + "/" + value);
     }
   };
 
@@ -186,6 +219,24 @@ function PlanManagement() {
     }
   };
 
+  const deleteSubscriptions = async (value) => {
+    setLoading(true);
+    try {
+      const response = await Get(SUBSCRIPTION.delete + selectedPlan, token);
+      setLoading(false);
+      console.log("response22", response);
+      if (response?.status) {
+     swal("Success","Plan Deleted Successfully",'success')
+      } else {
+        message.error("Something went wrong!");
+        console.log("error====>", response);
+      }
+    } catch (error) {
+      console.log(error.message);
+      setLoading(false);
+    }
+  };
+
   console.log("paginationConfig", paginationConfig);
 
   const itemRender = (_, type, originalElement) => {
@@ -207,20 +258,19 @@ function PlanManagement() {
       render: (value, item, index) => (index < 10 && "0") + (index + 1),
     },
     {
-      title: "Name",
-      dataIndex: "fullname",
-      key: "fullname",
+      title: "Package Name",
+      dataIndex: "title",
+      key: "title",
     },
     {
-      title: "Email Address	",
-      dataIndex: "email",
-      key: "email",
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
     },
     {
-      title: "Registered On",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (item) => <span>{dayjs(item).format("M/D/YYYY")}</span>,
+      title: "Duration",
+      dataIndex: "durationInDays",
+      key: "durationInDays",
     },
 
     {
@@ -254,12 +304,41 @@ function PlanManagement() {
       title: "Action",
       dataIndex: "_id",
       key: "_id",
-      render: (item) => (
-        <FaEye
-          style={{ fontSize: "16px", color: "#3d1c6f", cursor: "pointer" }}
-          onClick={() => navigate("/user-management/" + item)}
-        />
+      render: (value) => (
+        <Space size="middle">
+          <Dropdown
+            menu={{
+              items,
+              onClick: ({key}) => {
+                handleRedirect(key,value);
+              }
+            }}
+          >
+           <BiDotsVerticalRounded style={{fontSize:'20px'}}/>
+          </Dropdown>
+        </Space>
       ),
+
+//       render: (item) => (<>
+//         <AiOutlineEdit
+//           style={{ fontSize: "16px", color: "#3d1c6f", cursor: "pointer" }}
+//           onClick={() => navigate("/subscription-management/edit/" + item)}
+//         />
+//         &emsp;
+
+//         <FaEye
+//           style={{ fontSize: "16px", color: "#3d1c6f", cursor: "pointer" }}
+//           onClick={() => navigate("/subscription-management/view/" + item)}
+//         />
+
+// &emsp;
+
+// <FaTrash
+//   style={{ fontSize: "14px", color: "#3d1c6f", cursor: "pointer" }}
+// />
+
+//         </>
+//       ),
     },
   ];
 
@@ -453,89 +532,33 @@ function PlanManagement() {
               <br />
             </div>
           ) : (
-            <>
-              <Row>
-                <Col xs={24} md={16}>
-                  {subscriptions.map((item, index) => {
-                    return (
-                      <div class="jobBox" style={{ marginBottom: "20px" }}>
-                        <Row>
-                          <h4 class="posterName" style={{marginBottom:10}}>{item.title} </h4>
-                        </Row>
-                        <Row>
-                            <Col xs={24} md={12}>
-
-                          <h4 class="posterName" style={{marginBottom:10}}>
-                            <span class="primaryColor d-block mt-2">
-                              ${item.price}
-                            </span>
-                          </h4>
-                            </Col>
-                            <Col xs={24} md={12} style={{textAlign:'right'}}>
-                          <Select
-              className={item?.isActive ? "greenSelect" : "redSelect"}
-              suffixIcon={<FaCaretDown style={{ fontSize: "16px" }} />}
-              value={item?.isActive ? "active" : "inactive"}
-              onChange={() => {setModalOpen(true); setSelectedPlan(subscriptions[index])}}
-              style={{
-                fontSize: 16,
-              }}
-              bordered={false}
-              options={[
-                {
-                  value: "active",
-                  label: "Active",
-                },
-                {
-                  value: "inactive",
-                  label: "Inactive",
-                },
-              ]}
+            <Table
+              className="styledTable"
+              dataSource={subscriptions}
+              columns={columns}
+              pagination={false}
             />
-                            </Col>
-                        </Row>
-                        <Row>
-                          <p style={{marginBottom:10, fontSize:'16px'}}>{item.description}</p>
-                        </Row>
-                        <Row>
-                          <a
-                            onClick={() =>
-                                navigate(
-                                    `/subscription-management/edit/${item._id}`
-                                )
-                            }
-                            class="mainButton primaryButton"
-                          >
-                            Edit
-                          </a>
-                        </Row>
-                      </div>
-                    );
-                  })}
-                </Col>
-              </Row>
-            </>
           )}
         </Row>
-        {/* <Row style={{ padding: "10px 20px" }}>
-          <Col xs={24} md={12}>
-            <p>{message}</p>
-          </Col>
-          <Col
-            xs={24}
-            md={12}
-            style={{ display: "flex", justifyContent: "flex-end" }}
-          >
-            <Pagination
-              className="styledPagination"
-              onChange={(e) => handlePageChange(e)}
-              current={parseInt(paginationConfig.pageNumber)}
-              pageSize={paginationConfig.limit}
-              total={paginationConfig.totalDocs}
-              itemRender={itemRender}
-            />
-          </Col>
-        </Row> */}
+          <Row style={{ padding: "10px 20px" }}>
+            <Col xs={24} md={12}>
+              <p>{message}</p>
+            </Col>
+            <Col
+              xs={24}
+              md={12}
+              style={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              <Pagination
+                className="styledPagination"
+                onChange={(e) => handlePageChange(e)}
+                current={parseInt(paginationConfig.pageNumber)}
+                pageSize={paginationConfig.limit}
+                total={paginationConfig.totalDocs}
+                itemRender={itemRender}
+              />
+            </Col>
+          </Row>
         <br />
       </div>
       <br />
@@ -578,12 +601,7 @@ function PlanManagement() {
           },
         }}
       >
-        <Image
-          src="./images/question.png"
-          preview={false}
-          width={100}
-          height={120}
-        />
+      
         <Typography.Title level={4} style={{ fontSize: "25px" }}>
           {selectedPlan?.isActive ? "Deactivate" : "Activate"}
         </Typography.Title>
@@ -631,12 +649,7 @@ function PlanManagement() {
           },
         }}
       >
-        <Image
-          src="./images/question.png"
-          preview={false}
-          width={100}
-          height={120}
-        />
+       
         <Typography.Title level={4} style={{ fontSize: "25px" }}>
           {selectedPlan?.isActive ? "Deactivate" : "Activate"}
         </Typography.Title>
@@ -644,7 +657,52 @@ function PlanManagement() {
         Do You Want To  {selectedPlan?.isActive ? "Deactivate" : "Activate"} This PLan?
         </Typography.Text>
       </Modal>
-
+      <Modal
+        visible={modalOpen2}
+        onOk={() => deleteSubscriptions()}
+        onCancel={() => setModalOpen2(false)}
+        okText="Yes"
+        className="StyledModal"
+        style={{
+          left: 0,
+          right: 0,
+          marginLeft: "auto",
+          marginRight: "auto",
+          textAlign: "center",
+        }}
+        cancelText="No"
+        cancelButtonProps={{
+          style: {
+            border: "2px solid #3d1c6f",
+            color: "#3d1c6f",
+            height: "auto",
+            padding: "6px 35px",
+            borderRadius: "50px",
+            fontSize: "16px",
+            marginTop: "15px",
+          },
+        }}
+        okButtonProps={{
+          style: {
+            backgroundColor: "#3d1c6f",
+            color: "white",
+            marginTop: "15px",
+            height: "auto",
+            padding: "5px 35px",
+            borderRadius: "50px",
+            fontSize: "16px",
+            border: "2px solid #3d1c6f",
+          },
+        }}
+      >
+      
+        <Typography.Title level={4} style={{ fontSize: "25px" }}>
+          Delete
+        </Typography.Title>
+        <Typography.Text style={{ fontSize: 16 }}>
+        Do You Want To  Delete This PLan?
+        </Typography.Text>
+      </Modal>
 
     </Layout>
   );

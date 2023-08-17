@@ -256,7 +256,7 @@ const MyRouter = () => {
         />
 
         <Route
-          path="/subscription-management/edit/:id"
+          path="/subscription-management/:mode/:id"
           index
           element={
             <UserAuthCheck>
