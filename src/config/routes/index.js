@@ -28,6 +28,8 @@ import QueryDetails from "../../views/queries-management/queryDetails";
 import Dashboard from "../../views/dashboard";
 import Profile from "../../views/profile";
 import ChangePassword from "../../views/change-password"
+import Posts from "../../views/posts";
+import Gallery from "../../views/gallery"
 
 //components imports
 import UserAuthCheck from "../../components/AuthCheck/UserAuthCheck";
@@ -124,6 +126,40 @@ const MyRouter = () => {
             </UserAuthCheck>
           }
         />
+         <Route
+          path="/posts/:id"
+          index
+          element={
+            <UserAuthCheck>
+              <ClientLayout
+                head={{
+                  title: "Posts",
+                  description: "Some Description.",
+                }}
+              >
+                <Posts />
+              </ClientLayout>
+            </UserAuthCheck>
+          }
+        />
+
+<Route
+          path="/gallery/:id"
+          index
+          element={
+            <UserAuthCheck>
+              <ClientLayout
+                head={{
+                  title: "Posts",
+                  description: "Some Description.",
+                }}
+              >
+                <Gallery />
+              </ClientLayout>
+            </UserAuthCheck>
+          }
+        />
+
         <Route
           path="/service-provider-management"
           index

@@ -246,7 +246,7 @@ function UserDetails() {
                       type="primary"
                       htmlType="submit"
                       className="loginButton"
-                      onClick={() => navigate("/posts")}
+                      onClick={() => navigate("/posts/"+id)}
                     >
                     
                      Posts
@@ -266,7 +266,7 @@ function UserDetails() {
                       }}
                       ghost
                       size="large"
-                      onClick={() => navigate("/gallery")}
+                      onClick={() => navigate("/gallery/"+id)}
                     >
                        
                       Gallery

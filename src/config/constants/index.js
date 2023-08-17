@@ -5,6 +5,7 @@ export const SITE_NAME = "Eloquint Art"
 
 export const BASE_URL = "http://localhost:3004/api"
 export const UPLOAD_URL = "http://localhost:3004/Uploads/"
+export const UPLOAD_URL2 = "http://localhost:3004/"
 
 
 
@@ -15,6 +16,20 @@ export const AUTH = {
     verifyCode:"/admin/auth/verifyRecoverCode",
     resetPassword:"/admin/auth/resetPassword",
   };
+
+  export const NEWS = {
+    getNewsFeed : "/post/getNewsFeeds",
+    getUserPosts:"/post/getUserPosts/",
+    likePost : "/post/likePost",
+    lovePost: "/post/lovePost",
+    commentPost:"/post/comment/",
+    addPost:"/post/addPost"
+}
+export const GALLERY = {
+  addGallery:"/gallery/addGallery",
+  getMyGallery: "/gallery/getMyGallery/",
+  getAllGallery:"/gallery/getAllGallery"
+}
 
   export const ADMIN = {
     updateProfile: "/profile/updateProfile",
