@@ -3,9 +3,14 @@ export const SITE_NAME = "Eloquint Art"
 // export const BASE_URL = "https://dev74.onlinetestingserver.com:4001/api"
 // export const UPLOAD_URL = "https://dev74.onlinetestingserver.com:4001/"
 
-export const BASE_URL = "http://localhost:3004/api"
-export const UPLOAD_URL = "http://localhost:3004/Uploads/"
-export const UPLOAD_URL2 = "http://localhost:3004/"
+// export const BASE_URL = "http://localhost:3004/api"
+// export const UPLOAD_URL = "http://localhost:3004/Uploads/"
+// export const UPLOAD_URL2 = "http://localhost:3004/"
+
+
+export const BASE_URL = "https://api.eloquintart.com/api/"
+export const UPLOAD_URL = "https://api.eloquintart.com/Uploads/"
+export const UPLOAD_URL2 = "https://api.eloquintart.com"
 
 
 
@@ -17,6 +22,7 @@ export const AUTH = {
     resetPassword:"/admin/auth/resetPassword",
   };
 
+  
   export const NEWS = {
     getNewsFeed : "/post/getNewsFeeds",
     getUserPosts:"/post/getUserPosts/",
@@ -27,8 +33,20 @@ export const AUTH = {
 }
 export const GALLERY = {
   addGallery:"/gallery/addGallery",
+  addAdminGallery:"/gallery/addAdminGallery",
   getMyGallery: "/gallery/getMyGallery/",
-  getAllGallery:"/gallery/getAllGallery"
+  getAllGallery:"/gallery/getAllGallery",
+  getAllAdminGallery:"/gallery/getAllAdminGallery"
+}
+
+export const CONTEST = {
+  addContest:"/admin/contests/createContest",
+  getAllContests:"/admin/contests/getAllContests",
+  getAllContestEntries:"/admin/entries/getAllContestEntries/",
+  getOne:"/admin/contests/getContestById/",
+  updateContest:"/admin/contests/updateContest/",
+  deleteContest:"/admin/contests/deleteContest/",
+  selectWinner:"/admin/contests/selectWinner"
 }
 
   export const ADMIN = {
@@ -72,6 +90,8 @@ export const GALLERY = {
   export const PAYMENT = {
     get: "/payment",
     getOne: "/payment/",
+    getAllSubscriptionPayments:"/admin/payment/getAllSubscriptionPayments",
+    getAllContestPayments:"/admin/payment/getAllContestPayments"
   };
 
   export const NOTIFICATION = {

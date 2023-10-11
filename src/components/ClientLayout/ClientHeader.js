@@ -41,7 +41,7 @@ const ClientHeader = ({ visible, setVisible, visible2, setVisible2 }) => {
   const user = useSelector((state) => state.user.userData);
   const token = useSelector((state) => state.user.userToken);
 
-  console.log("user", token)
+  console.log("usersss", user)
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -383,12 +383,7 @@ const ClientHeader = ({ visible, setVisible, visible2, setVisible2 }) => {
           },
         }}
       >
-        <Image
-          src="./images/question.png"
-          preview={false}
-          width={100}
-          height={120}
-        />
+        
         <Typography.Title level={4} style={{ fontSize: "25px" }}>
           Logout
         </Typography.Title>

@@ -311,10 +311,11 @@ function FeedbackManagement() {
 
   return (
     <Layout className="configuration">
-      <div className="boxDetails">
         <Row style={{ padding: "10px 20px" }}>
           <h1 className="pageTitle">Feedback Management</h1>
         </Row>
+      <div className="boxDetails2">
+      
 
         <Row style={{ padding: "10px 20px" }}>
           <Col xs={24} md={12}>
@@ -474,12 +475,7 @@ function FeedbackManagement() {
           },
         }}
       >
-        <Image
-          src="./images/question.png"
-          preview={false}
-          width={100}
-          height={120}
-        />
+        
         <Typography.Title level={4} style={{ fontSize: "25px" }}>
           {selectedUser?.isActive ? "Deactivate" : "Activate"}
         </Typography.Title>

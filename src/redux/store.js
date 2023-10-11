@@ -9,7 +9,7 @@ const rootReducer = combineReducers({
 })
 
 const persistConfig = {
-  key: 'root',
+  key: 'eloquint_art_admin',
   storage,
 }
 

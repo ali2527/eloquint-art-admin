@@ -215,11 +215,59 @@
   border: none;
 
 }
+.radioSelector .ant-radio-button-wrapper{
+  border-radius: 50px!important;
+  padding: 20px 70px!important;
+  display: inline;
+  flex-direction: row;
+  border-color: #3d1c6f ;
+  border-width: 2px;
+}
+
+.radioSelector .ant-radio-button{
+  height:100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-width: 2px;
+}
+
+.radioSelector .ant-radio-button-wrapper:hover{
+ color:black;
+}
+
+
+.radioSelector .ant-radio-button-wrapper-checked:hover{
+  color:white;
+ }
+
+
+
+.radioSelector .ant-radio-button-wrapper-checked{
+  color:white!important;
+  background-color: #3d1c6f!important;
+  border-color: #3d1c6f!important;
+}
+
+.radioSelector .ant-radio-button-wrapper:nth-child(1){
+ margin-right: -50px!important;
+}
+
+.radioSelector .ant-radio-button-wrapper::before{
+  display: none!important;
+}
 
 .styledTable table{    
   border-collapse: inherit!important;
   border-spacing: 0 15px!important;
       
+}
+.tutorCard2{
+  border-radius: 1px;
+background: #DEBDF1;
+
+box-shadow: 0px 4px 22px 0px rgba(0, 0, 0, 0.16)!important;
 }
 
 .styledTable tbody tr {

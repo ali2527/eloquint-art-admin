@@ -33,8 +33,8 @@ const sideNavItems = [
   {
     key: 4,
     icon: "/images/dside-icon/4.png",
-    label: "Category Management",
-    path: "/category-management",
+    label: "Contest Management",
+    path: "/contest-management",
   },
   {
     key: 5,
@@ -75,7 +75,7 @@ const sideNavItems = [
   {
     key: 11,
     icon: "/images/dside-icon/4.png",
-    label: "Article Category Management",
+    label: "Contest Management",
     path: "/article-category-management",
   },
   {

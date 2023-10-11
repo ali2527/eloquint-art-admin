@@ -10,7 +10,7 @@ import {
   Button,
   Popover,
   Layout,
-  Checkbox,
+  Radio,
   Skeleton,
   Table,
   Spin,
@@ -32,17 +32,34 @@ import { useNavigate } from "react-router-dom";
 function PaymentLogs() {
   const token = useSelector((state) => state.user.userToken);
   const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+
   const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(false);
+
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [users2, setUsers2] = useState([]);
   const [paginationConfig, setPaginationConfig] = useState({
     pageNumber: 1,
     limit: 10,
     totalDocs: 0,
     totalPages: 0,
   });
+
+  const [paginationConfig2, setPaginationConfig2] = useState({
+    pageNumber: 1,
+    limit: 10,
+    totalDocs: 0,
+    totalPages: 0,
+  });
+  const [mode, setMode] = useState('subscription');
+  const handleModeChange = (e) => {
+    setMode(e.target.value);
+  };
+
   const navigate = useNavigate();
 
   const [filter, setFilter] = useState({
@@ -52,16 +69,32 @@ function PaymentLogs() {
     to: null,
   });
 
-  const startIndex =
-    (paginationConfig.pageNumber - 1) * paginationConfig.limit + 1;
+  const [filter2, setFilter2] = useState({
+    status: null,
+    keyword: "",
+    from: null,
+    to: null,
+  });
+
+  const startIndex = (paginationConfig.pageNumber - 1) * paginationConfig.limit + 1;
   const endIndex = Math.min(
     startIndex + paginationConfig.limit - 1,
     paginationConfig.totalDocs
   );
   const message = `Showing records ${endIndex} of ${paginationConfig.totalDocs}`;
 
+
+  const startIndex2 = (paginationConfig2.pageNumber - 1) * paginationConfig2.limit + 1;
+  const endIndex2 = Math.min(
+    startIndex2 + paginationConfig2.limit - 1,
+    paginationConfig2.totalDocs
+  );
+  const message2 = `Showing records ${endIndex2} of ${paginationConfig2.totalDocs}`;
+
+
   useEffect(() => {
     getPaymentLogs();
+    getPaymentLogs2();
   }, []);
 
   
@@ -75,8 +108,24 @@ function PaymentLogs() {
     getPaymentLogs(pageNumber);
   };
 
+  const handlePageChange2 = (pageNumber) => {
+    setPaginationConfig2({
+      ...paginationConfig2,
+      pageNumber: pageNumber,
+    });
+
+    getPaymentLogs2(pageNumber);
+  };
+
   const handleSearch = (value) => {
     setFilter({
+      ...filter,
+      keyword: value,
+    });
+  };
+
+  const handleSearch2 = (value) => {
+    setFilter2({
       ...filter,
       keyword: value,
     });
@@ -85,6 +134,13 @@ function PaymentLogs() {
   const handleStatusChange = (value) => {
     setFilter({
       ...filter,
+      status: value,
+    });
+  };
+
+  const handleStatusChange2 = (value) => {
+    setFilter2({
+      ...filter2,
       status: value,
     });
   };
@@ -99,8 +155,22 @@ function PaymentLogs() {
     getPaymentLogs(paginationConfig.pageNumber, paginationConfig.limit, "", true);
   };
 
+  const resetFilter2 = () => {
+    setFilter2({
+      status: null,
+      keyword: "",
+      from: null,
+      to: null,
+    });
+    getPaymentLogs2(paginationConfig2.pageNumber, paginationConfig2.limit, "", true);
+  };
+
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
+  };
+
+  const handleOpenChange2 = (newOpen) => {
+    setOpen2(newOpen);
   };
 
   const handleFrom = (date) => {
@@ -117,6 +187,21 @@ function PaymentLogs() {
     });
   };
 
+  const handleFrom2 = (date) => {
+    setFilter2({
+      ...filter2,
+      from: date,
+    });
+  };
+
+  const handleTo2 = (date) => {
+    setFilter2({
+      ...filter2,
+      to: date,
+    });
+  };
+
+
   const handleLimitChange = (pageSize) => {
     setPaginationConfig({
       ...paginationConfig,
@@ -127,33 +212,21 @@ function PaymentLogs() {
     getPaymentLogs(1, pageSize);
   };
 
-  const handleStatus = async () => {
-    try {
-      const index = users.findIndex((user) => user._id == selectedUser._id);
+  const handleLimitChange2 = (pageSize) => {
+    setPaginationConfig2({
+      ...paginationConfig2,
+      limit: pageSize,
+      current: 1,
+    });
 
-      console.log(index)
-      const response = await Get(PAYMENT.toggleStatus + "/" + selectedUser._id , token,{});
-      const newUsers = [...users];
-      
-      console.log(">>>>",newUsers[index].isActive)
-      console.log(">>>>",selectedUser.isActive)
-      newUsers[index].isActive = !selectedUser.isActive;
-      setModalOpen(false);
-      setUsers(newUsers);
-    } catch (error) {
-      console.log(error.message);
-    }  
-    
+    getPaymentLogs2(1, pageSize);
   };
-  
 
-  console.log("users", users.map(item => item.isActive))
-
-
+ 
   const getPaymentLogs = async (pageNumber, pageSize, search, reset = false) => {
     setLoading(true);
     try {
-      const response = await Get(PAYMENT.get, token, {
+      const response = await Get(PAYMENT.getAllSubscriptionPayments, token, {
         page: pageNumber
           ? pageNumber.toString()
           : paginationConfig.pageNumber.toString(),
@@ -167,13 +240,13 @@ function PaymentLogs() {
       });
       setLoading(false);
       console.log("response", response);
-      if (response?.docs) {
-        setUsers(response?.docs);
+      if (response?.status) {
+        setUsers(response?.data?.docs);
         setPaginationConfig({
-          pageNumber: response?.page,
-          limit: response?.limit,
-          totalDocs: response?.totalDocs,
-          totalPages: response?.totalPages,
+          pageNumber: response?.data?.page,
+          limit: response?.data?.limit,
+          totalDocs: response?.data?.totalDocs,
+          totalPages: response?.data?.totalPages,
         });
       } else {
         message.error("Something went wrong!");
@@ -185,7 +258,41 @@ function PaymentLogs() {
     }
   };
 
-  console.log("paginationConfig", paginationConfig);
+  
+  const getPaymentLogs2 = async (pageNumber, pageSize, search, reset = false) => {
+    setLoading2(true);
+    try {
+      const response = await Get(PAYMENT.getAllContestPayments, token, {
+        page: pageNumber
+          ? pageNumber.toString()
+          : paginationConfig2.pageNumber.toString(),
+        limit: pageSize
+          ? pageSize.toString()
+          : paginationConfig2.limit.toString(),
+        status: reset ? "" : filter.status || null,
+        keyword: search ? search : null,
+        from: reset ? "" : filter2?.from ? filter2?.from.toISOString() : "",
+        to: reset ? "" : filter2?.to ? filter2?.to.toISOString() : "",
+      });
+      setLoading2(false);
+      console.log("response", response);
+      if (response?.status) {
+        setUsers2(response?.data?.docs);
+        setPaginationConfig2({
+          pageNumber: response?.data?.page,
+          limit: response?.data?.limit,
+          totalDocs: response?.data?.totalDocs,
+          totalPages: response?.data?.totalPages,
+        });
+      } else {
+        message.error("Something went wrong!");
+        console.log("error====>", response);
+      }
+    } catch (error) {
+      console.log(error.message);
+      setLoading2(false);
+    }
+  };
 
   const itemRender = (_, type, originalElement) => {
     if (type === "prev") {
@@ -205,25 +312,64 @@ function PaymentLogs() {
       render: (value, item, index) => (index < 9 && "0") + (index + 1),
     },
     {
-      title: "Subscription Type",
-      dataIndex: "subscription",
-      key: "subscription",
-      render: (value, item, index) => value?.plan?.title,
+      title: "USER NAME	",
+      dataIndex: "payee",
+      key: "payee",
+      render: (value, item, index) => value?.fullName,
     },
     {
-      title: "Amount",
-      dataIndex: "subscription",
-      key: "subscription",
-      render: (value, item, index) => value?.amount,
+      title: "PACKAGE NAME	",
+      dataIndex: "payee",
+      key: "payee",
+      render: (value, item, index) => item?.subscription?.plan?.title,
     },
     {
-      title: "Paid On",
+      title: "AMOUNT",
+      dataIndex: "subscription",
+      key: "subscription",
+      render: (value, item, index) => <>${value?.amount}</>,
+    },
+    {
+      title: "PAID ON",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (item) => <span>{dayjs(item).format("M/D/YYYY")}</span>,
     },
 
    
+  ];
+
+  const columns2 = [
+    {
+      title: "S. No.	",
+      dataIndex: "key",
+      key: "key",
+      render: (value, item, index) => (index < 9 && "0") + (index + 1),
+    },
+    {
+      title: "USER NAME	",
+      dataIndex: "payee",
+      key: "payee",
+      render: (value, item, index) => value?.fullName,
+    },
+    {
+      title: "CONTEST NAME	",
+      dataIndex: "contest",
+      key: "contest",
+      render: (value, item, index) => value?.title,
+    },
+    {
+      title: "AMOUNT",
+      dataIndex: "subscription",
+      key: "subscription",
+      render: (value, item, index) => <>${item?.amount}</>,
+    },
+    {
+      title: "TRANSACTION DATE	",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (item) => <span>{dayjs(item).format("M/D/YYYY")}</span>,
+    },   
   ];
 
   const filterContent = (
@@ -292,12 +438,92 @@ function PaymentLogs() {
     </div>
   );
 
+
+  const filterContent2 = (
+    <div className="filterDropdown">
+      <div>
+        <p className="mainLabel" style={{ padding: "10px" }}>
+          Filter
+        </p>
+      </div>
+      <hr style={{ margin: 0 }} />
+
+      <div className="filterDropdownBody">
+        <p className="mainLabel">Creation Date:</p>
+        <DatePicker
+          className="mainInput filterInput"
+          value={filter2.from}
+          onChange={(e) => handleFrom2(e)}
+        />
+        <DatePicker
+          className="mainInput filterInput"
+          value={filter2.to}
+          onChange={(e) => handleTo2(e)}
+        />
+
+        <p className="mainLabel">Filter by Status:</p>
+
+        <Select
+          size={"large"}
+          className="filterSelectBox"
+          placeholder="Select Status"
+          value={filter2.status}
+          onChange={(e) => handleStatusChange2(e)}
+          style={{
+            width: "100%",
+            marginBottom: "10px",
+            textAlign: "left",
+          }}
+          options={[
+            { value: "active", label: "Active" },
+            { value: "inactive", label: "Inactive" },
+          ]}
+        />
+
+        <Button
+          type="primary"
+          shape="round"
+          block
+          size={"large"}
+          style={{ marginBottom: "10px" }}
+          className="mainButton primaryButton"
+          onClick={() => getPaymentLogs2()}
+        >
+          Apply
+        </Button>
+        <Button
+          type="primary"
+          shape="round"
+          block
+          size={"large"}
+          className="mainButton primaryButton2"
+          onClick={() => resetFilter2()}
+        >
+          Clear All
+        </Button>
+      </div>
+    </div>
+  );
   return (
     <Layout className="configuration">
-      <div className="boxDetails">
-        <Row style={{ padding: "10px 20px" }}>
+      <Row style={{ padding: "10px 20px",display:'flex',justifyContent:'space-between' }}>
           <h1 className="pageTitle">Payment Logs</h1>
+          <Radio.Group
+          className="radioSelector"
+          size="large"
+        onChange={handleModeChange}
+        value={mode}
+        style={{
+          marginBottom: 8,
+        }}
+      >
+        <Radio.Button value="subscription">Subscription</Radio.Button>
+        <Radio.Button value="contest">Contest</Radio.Button>
+      </Radio.Group>
+
         </Row>
+      {mode =="subscription" ? <div className="boxDetails2">
+        
 
         <Row style={{ padding: "10px 20px" }}>
           <Col xs={24} md={12}>
@@ -387,13 +613,14 @@ function PaymentLogs() {
               <Skeleton active />
               <br />
             </div>
-          ) : (
+          ) : (<>
             <Table
               className="styledTable"
               dataSource={users}
               columns={columns}
               pagination={false}
             />
+          </>
           )}
         </Row>
         <Row style={{ padding: "10px 20px" }}>
@@ -416,60 +643,130 @@ function PaymentLogs() {
           </Col>
         </Row>
         <br />
-      </div>
+      </div> : <div className="boxDetails2">
+        
+
+        <Row style={{ padding: "10px 20px" }}>
+          <Col xs={24} md={12}>
+            <h5 style={{ display: "inline", fontSize: 16 }}>Show : </h5>
+            <Select
+              size={"large"}
+              className="chartSelectBox"
+              defaultValue={paginationConfig2.limit}
+              onChange={(e) => handleLimitChange2(e)}
+              style={{
+                width: 70,
+                textAlign: "left",
+              }}
+              options={[
+                { value: 10, label: "10" },
+                { value: 20, label: "20" },
+                { value: 30, label: "30" },
+                { value: 40, label: "40" },
+                { value: 50, label: "50" },
+              ]}
+            />
+            &emsp;
+            <h5 style={{ display: "inline", fontSize: 16 }}>Entries</h5>
+          </Col>
+          <Col
+            xs={24}
+            md={12}
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          >
+            <Input
+              style={{ width: "250px" }}
+              className="mainInput dashInput"
+              placeholder="Search"
+              onChange={(e) => handleSearch2(e.target.value)}
+              suffix={
+                <FaSearch
+                  style={{
+                    color: "#3d1c6f",
+                    fontSize: 16,
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    getPaymentLogs2(1, paginationConfig2.limit, filter2.keyword)
+                  }
+                />
+              }
+              onPressEnter={(e) =>
+                getPaymentLogs2(1, paginationConfig2.limit, filter2.keyword)
+              }
+            />
+            &emsp;
+            <Popover
+              content={filterContent2}
+              trigger="click"
+              open={open2}
+              onOpenChange={handleOpenChange2}
+              placement="bottomRight"
+              arrow={false}
+            >
+              <Button
+                style={{
+                  padding: "10px 15px",
+                  height: "auto",
+                  backgroundColor: "#3d1c6f",
+                }}
+              >
+                <FaFilter style={{ fontSize: "16px", color: "white" }} />
+              </Button>
+            </Popover>
+          </Col>
+        </Row>
+
+        <Row style={{ padding: 20, overflow: "auto" }}>
+          {loading2 ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Skeleton active />
+              <br />
+            </div>
+          ) : (<>
+             <Table
+            className="styledTable"
+            dataSource={users2}
+            columns={columns2}
+            pagination={false}
+          />
+          </>
+          )}
+        </Row>
+        <Row style={{ padding: "10px 20px" }}>
+          <Col xs={24} md={12}>
+            <p>{message2}</p>
+          </Col>
+          <Col
+            xs={24}
+            md={12}
+            style={{ display: "flex", justifyContent: "flex-end" }}
+          >
+            <Pagination
+              className="styledPagination"
+              onChange={(e) => handlePageChange2(e)}
+              current={parseInt(paginationConfig2.pageNumber)}
+              pageSize={paginationConfig2.limit}
+              total={paginationConfig2.totalDocs}
+              itemRender={itemRender}
+            />
+          </Col>
+        </Row>
+        <br />
+      </div>}
       <br />
-      <br />
-      <Modal
-        visible={modalOpen}
-        onOk={() => handleStatus()}
-        onCancel={() => setModalOpen(false)}
-        okText="Yes"
-        className="StyledModal"
-        style={{
-          left: 0,
-          right: 0,
-          marginLeft: "auto",
-          marginRight: "auto",
-          textAlign: "center",
-        }}
-        cancelText="No"
-        cancelButtonProps={{
-          style: {
-            border: "2px solid #3d1c6f",
-            color: "#3d1c6f",
-            height: "auto",
-            padding: "6px 35px",
-            borderRadius: "50px",
-            fontSize: "16px",
-            marginTop: "15px",
-          },
-        }}
-        okButtonProps={{
-          style: {
-            backgroundColor: "#3d1c6f",
-            color: "white",
-            marginTop: "15px",
-            height: "auto",
-            padding: "5px 35px",
-            borderRadius: "50px",
-            fontSize: "16px",
-            border: "2px solid #3d1c6f",
-          },
-        }}
-      >
-        <Image
-          src="./images/question.png"
-          preview={false}
-          width={100}
-          height={120}
-        />
-        <Typography.Title level={4} style={{ fontSize: "25px" }}>
-          {selectedUser?.isActive ? "Deactivate" : "Activate"}
-        </Typography.Title>
-        <Typography.Text style={{ fontSize: 16 }}>
-        Do You Want To  {selectedUser?.isActive ? "Deactivate" : "Activate"} This User?
-        </Typography.Text>
-      </Modal>
+    
     </Layout>
   );
 }

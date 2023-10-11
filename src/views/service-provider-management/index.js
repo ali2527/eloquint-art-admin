@@ -494,12 +494,7 @@ function SpManagement() {
           },
         }}
       >
-        <Image
-          src="./images/question.png"
-          preview={false}
-          width={100}
-          height={120}
-        />
+        
         <Typography.Title level={4} style={{ fontSize: "25px" }}>
           {selectedUser?.isActive ? "Deactivate" : "Activate"}
         </Typography.Title>

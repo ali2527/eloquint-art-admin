@@ -179,7 +179,7 @@ Registered
               </h6>
               <br/>
               <h6 class="analyticsText" style={{ margin: 0 }}>
-               2
+               -
               </h6>
             </Col>
             <Col xs={0} md={10}>
@@ -203,7 +203,7 @@ Registered
               </h6>
               <br/>
               <h6 class="analyticsText" style={{ margin: 0 }}>
-               2
+               -
               </h6>
             </Col>
             <Col xs={0} md={10}>
@@ -228,7 +228,7 @@ Registered
               </h6>
               <br/>
               <h6 class="analyticsText" style={{ margin: 0 }}>
-                $ 32,560
+                $ -
               </h6>
             </Col>
             <Col xs={0} md={10}>

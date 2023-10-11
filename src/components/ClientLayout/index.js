@@ -47,17 +47,23 @@ const sideNavItems = [
     key: 4,
     icon: side4,
     label: "Contest",
-    path: "/category-management",
+    path: "/contest-management",
   },
 
   {
     key: 5,
     icon: side6,
     label: "Payment Logs",
-    path: "/service-provider-management",
+    path: "/payment-logs",
   },
   {
     key: 6,
+    icon: side5,
+    label: "Gallery",
+    path: "/admin-gallery",
+  },
+  {
+    key: 7,
     icon: side5,
     label: "Feedbacks",
     path: "/feedback-management",

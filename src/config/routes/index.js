@@ -9,14 +9,13 @@ import UserManagement from "../../views/user-management";
 import UserDetails from "../../views/user-management/userDetails";
 import ServiceProviderManaqgement from "../../views/service-provider-management";
 import ServiceProviderDetails from "../../views/service-provider-management/spDetails";
-import ServiceTypeManagement from "../../views/category-management";
-import CategoryDetails from "../../views/category-management/categoryDetails";
 import SubscriptionManagement from "../../views/subscription-management";
 import SubscriptionDetails from "../../views/subscription-management/subscriptionDetails";
 import ArticleManagement from "../../views/article-management";
 import AddArticle from "../../views/article-management/addArticle";
-import ArticleCategoryManagement from "../../views/article-category-management";
-import ArticleCategoryDetails from "../../views/article-category-management/articleCategoryDetails";
+import ContestManagement from "../../views/contest-management";
+import ContestDetails from "../../views/contest-management/contestDetails";
+import ContestView from "../../views/contest-management/contestView";
 import PaymentLogs from "../../views/payment-logs";
 import PaymentAndBooking from "../../views/booking-and-payment-details";
 import FeedbackManagement from "../../views/feedback-management";
@@ -30,7 +29,8 @@ import Profile from "../../views/profile";
 import ChangePassword from "../../views/change-password"
 import Posts from "../../views/posts";
 import Gallery from "../../views/gallery"
-
+import AdminGallery from "../../views/adminGallery"
+import AddGallery from "../../views/adminGallery/addGallery"
 //components imports
 import UserAuthCheck from "../../components/AuthCheck/UserAuthCheck";
 // import AdminAuthCheck from "../../components/AuthCheck/AdminAuthCheck";
@@ -38,7 +38,7 @@ import ClientLayout from "../../components/ClientLayout";
 
 const MyRouter = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/admin">
       <Routes>
         <Route path="/signin" index element={<Signin />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -160,6 +160,40 @@ const MyRouter = () => {
           }
         />
 
+<Route
+          path="/admin-gallery"
+          index
+          element={
+            <UserAuthCheck>
+              <ClientLayout
+                head={{
+                  title: "Admin Gallery",
+                  description: "Some Description.",
+                }}
+              >
+                <AdminGallery />
+              </ClientLayout>
+            </UserAuthCheck>
+          }
+        />
+
+<Route
+          path="/admin-gallery/add"
+          index
+          element={
+            <UserAuthCheck>
+              <ClientLayout
+                head={{
+                  title: "Gallery Add",
+                  description: "Some Description.",
+                }}
+              >
+                <AddGallery />
+              </ClientLayout>
+            </UserAuthCheck>
+          }
+        />
+
         <Route
           path="/service-provider-management"
           index
@@ -192,38 +226,7 @@ const MyRouter = () => {
             </UserAuthCheck>
           }
         />
-        <Route
-          path="/category-management"
-          index
-          element={
-            <UserAuthCheck>
-              <ClientLayout
-                head={{
-                  title: "Category Management",
-                  description: "Some Description.",
-                }}
-              >
-                <ServiceTypeManagement />
-              </ClientLayout>
-            </UserAuthCheck>
-          }
-        />
-        <Route
-          path="/category-management/:type/:id"
-          index
-          element={
-            <UserAuthCheck>
-              <ClientLayout
-                head={{
-                  title: "Category Add / Edit",
-                  description: "Some Description.",
-                }}
-              >
-                <CategoryDetails />
-              </ClientLayout>
-            </UserAuthCheck>
-          }
-        />
+
 
         <Route
           path="/feedback-management"
@@ -427,24 +430,24 @@ const MyRouter = () => {
           }
         />
          <Route
-          path="/article-category-management"
+          path="/contest-management"
           index
           element={
             <UserAuthCheck>
               <ClientLayout
                 head={{
-                  title: "Article Category Management",
+                  title: "Contest Management",
                   description: "Some Description.",
                 }}
               >
-                <ArticleCategoryManagement />
+                <ContestManagement />
               </ClientLayout>
             </UserAuthCheck>
           }
         />
 
 <Route
-          path="/article-category-management/edit/:id"
+          path="/contest-management/edit/:id"
           index
           element={
             <UserAuthCheck>
@@ -454,13 +457,30 @@ const MyRouter = () => {
                   description: "Some Description.",
                 }}
               >
-                <ArticleCategoryDetails />
+                <ContestDetails />
+              </ClientLayout>
+            </UserAuthCheck>
+          }
+        />
+
+<Route
+          path="/contest-management/view/:id"
+          index
+          element={
+            <UserAuthCheck>
+              <ClientLayout
+                head={{
+                  title: "Article Category Edit",
+                  description: "Some Description.",
+                }}
+              >
+                <ContestView/>
               </ClientLayout>
             </UserAuthCheck>
           }
         />
 <Route
-          path="/article-category-management/add"
+          path="/contest-management/add"
           index
           element={
             <UserAuthCheck>
@@ -470,7 +490,7 @@ const MyRouter = () => {
                   description: "Some Description.",
                 }}
               >
-                <ArticleCategoryDetails />
+                <ContestDetails />
               </ClientLayout>
             </UserAuthCheck>
           }
@@ -504,7 +524,7 @@ const MyRouter = () => {
                   description: "Some Description.",
                 }}
               >
-                <ArticleCategoryDetails />
+                <ContestDetails />
               </ClientLayout>
             </UserAuthCheck>
           }
